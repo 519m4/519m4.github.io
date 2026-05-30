@@ -1,14 +1,8 @@
 "use client";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import nextConfig from "../next.config";
-import SwipeableTabs from "@/components/ui/swipeable-tabs";
-import Typing from "@/components/ui/type";
-import Snippet from "@/components/ui/snippet";
-import Image from "next/image"
-import GlowText from "@/components/ui/glow-text";
 import Link from "next/link";
-import AudioPlayer from "@/app/audio";
+import nextConfig from "../next.config";
 import useragents from "@/app/age";
 import particle1 from "@/public/json/ts-particle1.json";
 import particle2 from "@/public/json/ts-particle2.json";
@@ -16,15 +10,14 @@ import particle3 from "@/public/json/ts-particle3.json";
 import particle4 from "@/public/json/ts-particle4.json";
 import particle5 from "@/public/json/ts-particle5.json";
 import particle6 from "@/public/json/ts-particle6.json";
-import { BookIcon, Check, ChevronsUpDown, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { loadSlim } from "@tsparticles/slim";
 import { SiGithub } from "@icons-pack/react-simple-icons";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import Book, { BookHeader, BookTitle, BookDescription } from "@/components/ui/book";
+import { TiltCard } from "@/components/tilt-card";
+import { SpecialText } from "@/components/special-text";
+import Rays from "@/components/light-rays";
+import { RandomizedText } from "@/components/randomized-text";
+import { Signature } from "@/components/signature";
+import GradientWaveText from "@/components/gradient-wave-text";
 
 const ParticlesMemo = React.memo(Particles);
 type ParticleConfig = {
@@ -36,37 +29,29 @@ type ParticleConfig = {
     Unknown: object
 };
 
+async function GetlanyardR() {
+
+    const r = await fetch(
+
+        "https://api.lanyard.rest/v1/users/809373892183195668",
+        {
+            next: {
+                revalidate: 60
+            }
+        }
+    )
+
+    const json = await r.json();
+    return json.data.discord_status;
+
+}
+
 export default function Home() {
-    const [showBook, setshowBook] = useState<boolean>(true);
-    const [fadeOutBook, setFadeOutBook] = useState<boolean>(false);
-    const [fadeInContent, setFadeInContent] = useState<boolean>(false);
     const [value, setValue] = useState<string>("");
     const [open, setOpen] = useState(false);
 
     const BASE_PATH = nextConfig.basePath || "";
     const ispc = useragents();
-
-    const [hi, shi] = useState(false);
-
-    const handlei = () => {
-        shi(true);
-    }
-
-    const handleShowBook = () => {
-        setFadeOutBook(true);
-        setTimeout(() => {
-            setFadeInContent(true);
-            setshowBook(false);
-        }, 500);
-    };
-
-    const handleCloseBook = () => {
-        setFadeInContent(false);
-        setTimeout(() => {
-            setFadeOutBook(false);
-            setshowBook(true);
-        }, 500);
-    };
 
     const particlesconf: ParticleConfig = useMemo(() => ({
         Geometric: particle1,
@@ -84,6 +69,7 @@ export default function Home() {
         });
     }, []);
 
+
     const handleSelectparticles = useCallback((currentval: string) => {
         setValue(currentval === value ? "" : currentval);
         setOpen(false);
@@ -92,225 +78,146 @@ export default function Home() {
     if (!ispc) {
         return (
             <div className="flex justify-center items-center h-screen text-center text-lg">
-                <p>Not supported... :{`(`}</p>
+                <p>Only Desktop</p>
             </div>
         );
     }
 
     return (
-        <div>
-            {(value === "" || value === "Default") ? (
-                <>
-                    <video
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        className={`fixed top-0 left-0 w-full h-full object-cover z-0 transition-all duration-1000 select-none
-                        ${!hi ? "blur-md brightness-75" : "blur-0 brightness-100"}`}
-                    >
-                        <source src={`${BASE_PATH}/video/loop.mp4`} type="video/mp4" />
-                    </video>
+        <div className="h-full w-full">
 
-                    <AudioPlayer shouldPlay={hi} />
+            <Rays backgroundColor="var(--background)" style={{ zIndex: 0 }} reach={30} raysColor={{ mode: "multi", color1: "#FFFFFF", color2: "#000000" }} />
 
-                    {!hi && (
-                        <div
-                            onClick={handlei}
-                            className="fixed top-0 left-0 w-full h-full z-0 flex items-center justify-center bg-black/30 cursor-pointer select-none"
-                        >
-                        </div>
-                    )}
-                </>
-            ) : (
-                <ParticlesMemo
-                    options={particlesconf[value as keyof ParticleConfig]}
-                    className="fixed top-0 left-0 w-full h-full z-0"
-                />
-            )}
-            <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                    <div className="absolute top-4 left-4">
-                        <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] p-4 box-border relative">
-                            {value ? Object.keys(particlesconf).find((key) => key === value) : "Select backgrounds..."}
-                            <ChevronsUpDown className="opacity-50" />
-                        </Button>
+            <div className="min-h-[150px] flex flex-col items-center justify-center relative pt-16">
+
+                <div className="flex text-primary">
+
+                    <SpecialText speed={15} className="text-5xl font-geistMono">HI, Im sigma</SpecialText>
+
+                </div>
+
+                <div className="flex flex-col text-primary relative  mt-2 ml-[-48px]">
+
+                    <div className="flex justify-center">
+
+                        <Signature text="Who am I?" color="white" />
+
                     </div>
-                </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
-                    <Command>
-                        <CommandInput placeholder="Search..." />
-                        <CommandList>
-                            <CommandEmpty>Nothing here...</CommandEmpty>
-                            <CommandGroup>
-                                {Object.entries(particlesconf).map(([key]) => (
-                                    <CommandItem key={key} onSelect={() => handleSelectparticles(key)}>
-                                        {key}
-                                        <Check className={`ml-auto ${value === key ? "opacity-100" : "opacity-0"}`} />
-                                    </CommandItem>
-                                ))}
-                            </CommandGroup>
-                        </CommandList>
-                    </Command>
-                </PopoverContent>
-            </Popover>
 
+                    <div className="flex flex-col">
 
-            <div className="flex justify-center items-center h-screen ">
-                {showBook ? (
-                    <div
-                        onClick={handleShowBook}
-                        className={`cursor-pointer transition-opacity duration-500 ${fadeOutBook ? "opacity-0" : "opacity-100"
-                            }`}
-                    >
-                        <Book size="sm" radius="md">
-                            <BookHeader>
-                                <BookIcon size={20} />
-                            </BookHeader>
-                            <BookTitle>Book of about Σ</BookTitle>
-                            <BookDescription>Click to open</BookDescription>
-                        </Book>
+                        <RandomizedText split="words" className="text-2xl top-4 font-geistMono">17 yo japanese stupid student who loves</RandomizedText>
+
+                        <RandomizedText split="words" className="text-2xl font-geistMono">cars(especially drift machine) & pc.</RandomizedText>
+
                     </div>
-                ) : (
-                    (
-                        <div
-                            className={`relative rounded-lg border overflow-hidden backdrop-blur-sm transition-opacity duration-500 ${fadeInContent ? "opacity-100" : "opacity-0"
-                                }`}
+
+                    <div className="flex flex-col text-3xl font-geistMono gap-10 mt-6">
+                        
+                        <p className="text-3xl">Games I’m into lately</p>
+
+                    </div>
+
+                    <div className="flex flex-row mt-6 gap-2">
+
+                        <TiltCard
+                            tiltLimit={10}
+                            scale={1.05}
+                            perspective={1200}
+                            className="w-[150px] aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer"
                         >
-                            <div className="items-center">
-                                <Image
-                                    src={`${BASE_PATH}/banner.png`}
-                                    alt="Background Image"
-                                    width={650}
-                                    height={300}
-                                    style={{ objectFit: "cover" }}
-                                    priority={true}
-                                />
-                            </div>
-                            <div className="flex justify-center items-center mb-2 ">
-                                <Avatar className="rounded-full border border-muted-foreground/50 w-16 h-16">
-                                    <AvatarImage src={`${BASE_PATH}/lovelang.png`} fetchPriority="high" />
-                                    <AvatarFallback>IC</AvatarFallback>
-                                </Avatar>
-                            </div>
 
-                            <div className="text-center">
-                                <div className="absolute top-2 right-2">
-                                    <X
-                                        size={24}
-                                        onClick={handleCloseBook}
-                                        className="cursor-pointer"
-                                    />
+                            <div className="flex justify-center items-center">
+
+                                <img
+                                    src={`https://images.igdb.com/igdb/image/upload/t_cover_big/co8fu7.webp`}
+                                    className="w-full h-full object-cover"
+                                ></img>
+
+                                <div className="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-4">
+
+                                    <p className="text-white font-bold">Minecraft</p>
+
                                 </div>
 
-                                <h1 className="text-xl font-medium">Sigma</h1>
-
-                                <div className="flex justify-center"> {/*Status message*/}
-                                    <Typing>I wanna eat sushi🍣</Typing>
-                                </div>
-                                <div className="flex flex-col gap-1.5 mt-2">
-                                    <div className="flex gap-2 justify-center">
-                                        <Badge size="sm" variant="blue-subtle" className="my-auto">
-                                            Student
-                                        </Badge>
-                                        <Badge size="sm" variant="green" className="my-auto">
-                                            Developer
-                                        </Badge>
-                                        <Badge size="sm" variant="amber-subtle" className="my-auto">
-                                            Traveler
-                                        </Badge>
-                                    </div>
-                                </div>
                             </div>
 
-                            <SwipeableTabs
-                                tabs={[
-                                    {
-                                        label: "About me",
-                                        content: (
-                                            <div className="p-4 px-2">
-                                                <div className="text-center">
-                                                    <div className="flex flex-col gap-0.5 text-nowrap ">
-                                                        <p className="text-pretty text-gray-50 text-muted-foreground text-lg">
-                                                            Name: Sigma, 0x8h
-                                                        </p>
-                                                        <div className="text-pretty text-muted-foreground text-base text-gray-100" >
-                                                            <p>
-                                                                Age: 16
-                                                            </p>
-                                                            <p>
-                                                                Country: Japan
-                                                            </p>
-                                                            <p>
-                                                                Hobby: Programming, cycling, trip
-                                                            </p>
-                                                            <p>
-                                                                Skill: C/++/#, ReverseEngineering
-                                                            </p>
-                                                            <p>
-                                                                Project: Disassembler, OS dev
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ),
-                                    },
-                                    {
-                                        label: "My creations",
-                                        content: (
-                                            <div className="p-4 px-2">
-                                                <div className="text-center text-nowrap">
-                                                    <p className="text-pretty text-muted-foreground text-gray-50 font-semibold text-lg mb-1">
-                                                        My creations
-                                                    </p>
-                                                    <p className="text-pretty text-muted-foreground text-base mb-2">
-                                                        Nothing...
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        ),
-                                    },
-                                    {
-                                        label: "Contacts",
-                                        content: (
-                                            <div className="p-4 rounded font-bold">
-                                                <div className="flex items-center flex-col mb-6 text-base">
-                                                    <p>
-                                                        Discord
-                                                    </p>
-                                                    <Snippet text="https://discordapp.com/users/1324785152144048271" className="w-[200px]" />
-                                                    <p className="mt-2">
-                                                        Telegram
-                                                    </p>
-                                                    <Snippet text="https://t.me/z91xp" className="w-[200px]" />
-                                                </div>
-                                            </div>
-                                        ),
-                                    },
-                                ]}
-                                onTabChange={(index, label) =>
-                                    console.log(`Tab Changed: Index=${index}, Label=${label}`)
-                                }
-                            />
-                            <div className="flex flex-col relative border-t overflow-hidden items-center text-center ">
-                                <p className="text-gray-400 text-base mt-2 mb-2">Made with {" "}
-                                    {
-                                        <Link href={"https://ui.3x.gl"}>
-                                            <GlowText className="text-2xl sm:text-3xl lg:text-base font-medium">
-                                                x/ui
-                                            </GlowText>
-                                        </Link>
-                                    } ♡</p>
-                                <p className="text-gray-400 text-sm mb-2">thanks tom to contribute this site! {"<"}3</p>
-                                <Link href={"https://github.com/9z5q/9z5q.github.io"}>
-                                    <SiGithub color='#ffffff' size={24} className="mb-2" />
-                                </Link>
+                        </TiltCard>
+
+                        <TiltCard
+                            tiltLimit={10}
+                            scale={1.05}
+                            perspective={1200}
+                            className="w-[150px] aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer"
+                        >
+                            <div className="flex justify-center items-center">
+
+                                <img
+                                    src={`https://images.igdb.com/igdb/image/upload/t_cover_big/co90je.webp`}
+                                    className="w-full h-full object-cover"
+                                ></img>
+
+                                <div className="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-4">
+
+                                    <p className="text-white font-bold">Zenless Zone Zero</p>
+
+                                </div>
+
                             </div>
-                        </div>
-                    )
-                )}
+
+                        </TiltCard>
+
+                        <TiltCard
+                            tiltLimit={10}
+                            scale={1.05}
+                            perspective={1200}
+                            className="w-[150px] aspect-[3/4] rounded-2xl overflow-hidden cursor-pointer"
+                        >
+
+                            <div className="flex justify-center items-center">
+
+                                <img
+                                    src={`https://images.igdb.com/igdb/image/upload/t_cover_big/cobzsp.webp`}
+                                    className="w-full h-full object-cover"
+                                ></img>
+
+                                <div className="absolute bottom-0 w-full bg-gradient-to-t from-black/80 to-transparent p-4">
+
+                                    <p className="text-white font-bold">Neverness to Everness</p>
+
+                                </div>
+
+                            </div>
+
+                        </TiltCard>
+
+                    </div>
+
+                </div>
+
             </div>
+
+            <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 px-4">
+
+                <div className="flex justify-center items-center rounded-lg border backdrop-blur-sm overflow-hidden px-4 py-2 gap-4">
+
+                    <Link href={"https://spell.sh/"}>
+
+                        <GradientWaveText className="font-geistMono">Made with spell ui</GradientWaveText>
+
+                    </Link>
+
+                    <Link href={"https://github.com/519m4/519m4.github.io"}>
+
+                        <SiGithub color='#ffffff' size={24} className="w-[15px]" />
+
+                    </Link>
+
+
+                </div>
+
+            </div>
+
         </div>
 
     );
