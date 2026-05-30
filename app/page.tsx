@@ -1,16 +1,7 @@
 "use client";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
-import React, { useEffect, useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 import nextConfig from "../next.config";
 import useragents from "@/app/age";
-import particle1 from "@/public/json/ts-particle1.json";
-import particle2 from "@/public/json/ts-particle2.json";
-import particle3 from "@/public/json/ts-particle3.json";
-import particle4 from "@/public/json/ts-particle4.json";
-import particle5 from "@/public/json/ts-particle5.json";
-import particle6 from "@/public/json/ts-particle6.json";
-import { loadSlim } from "@tsparticles/slim";
 import { SiGithub } from "@icons-pack/react-simple-icons";
 import { TiltCard } from "@/components/tilt-card";
 import { SpecialText } from "@/components/special-text";
@@ -19,61 +10,9 @@ import { RandomizedText } from "@/components/randomized-text";
 import { Signature } from "@/components/signature";
 import GradientWaveText from "@/components/gradient-wave-text";
 
-const ParticlesMemo = React.memo(Particles);
-type ParticleConfig = {
-    Geometric: object,
-    PolygonMask: object,
-    NYANCAT: object,
-    Parallax: object,
-    Basic: object,
-    Unknown: object
-};
-
-async function GetlanyardR() {
-
-    const r = await fetch(
-
-        "https://api.lanyard.rest/v1/users/809373892183195668",
-        {
-            next: {
-                revalidate: 60
-            }
-        }
-    )
-
-    const json = await r.json();
-    return json.data.discord_status;
-
-}
-
 export default function Home() {
-    const [value, setValue] = useState<string>("");
-    const [open, setOpen] = useState(false);
-
     const BASE_PATH = nextConfig.basePath || "";
     const ispc = useragents();
-
-    const particlesconf: ParticleConfig = useMemo(() => ({
-        Geometric: particle1,
-        PolygonMask: particle2,
-        NYANCAT: particle3,
-        Parallax: particle4,
-        Basic: particle5,
-        Unknown: particle6
-    }), []);
-
-    useEffect(() => {
-        console.log("Initialized");
-        initParticlesEngine(async (engine) => {
-            await loadSlim(engine);
-        });
-    }, []);
-
-
-    const handleSelectparticles = useCallback((currentval: string) => {
-        setValue(currentval === value ? "" : currentval);
-        setOpen(false);
-    }, [value]);
 
     if (!ispc) {
         return (
